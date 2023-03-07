@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.AlarmClock
 import android.text.Editable
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -29,17 +31,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViews(){
-        testView()
+        openAlarm()
         resetData()
         litersPerDayCalculation()
     }
 
-    private fun testView() {
+    private fun openAlarm() {
         _binding.buttonAlarm.setOnClickListener {
             val intent = Intent(AlarmClock.ACTION_SET_ALARM)
             intent.putExtra(AlarmClock.EXTRA_LENGTH, "")
             startActivity(intent)
-
         }
     }
 
@@ -48,10 +49,16 @@ class MainActivity : AppCompatActivity() {
         _binding.apply {
             buttonCalc.setOnClickListener {
                 if (verificationFields()){
+                    val name = editTextName
                     val age = editTextAge.text.toString().toInt()
                     val weight = editTextWeight.text.toString().toDouble()
                     val result = textViewResult
                     viewModelMain.calcTotalMl(weight, age, result)
+                    viewModelMain.setVisibleMessage(
+                        name, textViewNameResult, textViewLltResult, linearLayoutMesage,
+                        applicationContext
+                    )
+                    hiderKeyboard()
                 }else{
                     Toast.makeText(applicationContext, R.string.fill_in_the_fields, Toast.LENGTH_SHORT).show()
                 }
@@ -76,9 +83,15 @@ class MainActivity : AppCompatActivity() {
                 editTextAge.text = reset.toEditable()
                 editTextName.text = reset.toEditable()
                 editTextWeight.text = reset.toEditable()
-                textViewResult.text = reset.toEditable()
+                textViewResult.text = getString(R.string.text_lt)
+                linearLayoutMesage.visibility = View.INVISIBLE
             }
         }
+    }
+
+    private fun hiderKeyboard(){
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(_binding.buttonCalc.windowToken, 0)
     }
 
     private fun String.toEditable():Editable= Editable.Factory.getInstance().newEditable(this)

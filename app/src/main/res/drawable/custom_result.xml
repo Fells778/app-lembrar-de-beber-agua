@@ -15,8 +15,13 @@
         android:right="10dp"
         android:top="10dp">
         <shape android:shape="oval">
-            <solid android:color="@color/white">
-            </solid>
+            <gradient
+                android:startColor="#00AEFF"
+                android:centerColor="#0085C3"
+                android:endColor="#0073A8"
+                android:type="linear">
+
+            </gradient>
         </shape>
     </item>
 </layer-list>

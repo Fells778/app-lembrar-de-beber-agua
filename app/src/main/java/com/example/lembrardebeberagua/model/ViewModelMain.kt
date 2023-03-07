@@ -1,10 +1,13 @@
 package com.example.lembrardebeberagua.model
 
 import android.app.AlarmManager
-import android.app.PendingIntent
+import android.content.Context
+import android.view.View
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.TimePicker
 import androidx.lifecycle.ViewModel
+import com.example.lembrardebeberagua.R
 import java.text.NumberFormat
 import java.util.*
 
@@ -16,8 +19,6 @@ class ViewModelMain: ViewModel() {
     private var resultMl = 0.0
     private var totalResultML = 0.0
     private val format = NumberFormat.getNumberInstance(Locale("pt", "BR"))
-    var alarmTimePicker: TimePicker? = null
-    var pendingIntent: PendingIntent? = null
     var alarmManager: AlarmManager? = null
 
     fun calcTotalMl(weight: Double, age: Int, textView: TextView) {
@@ -38,5 +39,20 @@ class ViewModelMain: ViewModel() {
         textView.text = format.format(resultMl/1000) + "" + " L "
     }
 
-
+    fun setVisibleMessage(
+        editTextName: EditText,
+        textName: TextView,
+        textResult: TextView,
+        linearLayout: LinearLayout,
+        context: Context
+    ) {
+        linearLayout.visibility = View.VISIBLE
+        textResult.text = format.format(resultMl/1000) + "" + " Litros de água por dia"
+        if (editTextName.text.isNotEmpty()){
+            textName.text = context.getString(R.string.text_name).format(editTextName.text)
+            textName.visibility = View.VISIBLE
+        }else {
+            textName.visibility = View.GONE
+        }
+    }
 }
