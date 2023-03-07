@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">LembrarDeBeberAgua</string>
+
+    <string name="empty_field">Campo vazio</string>
+    <string name="text_remember_me">Lembrar de mim</string>
+    <string name="text_your_name">Seu nome (opcional)</string>
+    <string name="text_your_age">Sua idade</string>
+    <string name="text_your_weight">Seu peso (Kg)</string>
+    <string name="text_reset">Redefinir</string>
+    <string name="text_remember">Lembrar</string>
+    <string name="text_alert">Alarme</string>
+    <string name="text_calc">Calcular</string>
+    <string name="legend_reset_image">Image de resete</string>
+    <string name="legend_drinking_water">Image de homem bebendo agua</string>
+    <string name="text_zero">00:00</string>
+
+    <!-- Strings from Activity -->
+    <string name="fill_in_the_fields">Preencha os campos acima</string>
+
+</resources>
