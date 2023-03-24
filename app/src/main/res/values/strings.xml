@@ -16,6 +16,9 @@
     <string name="legend_reset_image">Image de resete</string>
     <string name="legend_drinking_water">Image de homem bebendo agua</string>
     <string name="text_zero">00:00</string>
+    <string name="text_ingest_bottle">garrafinha de 500ml</string>
+    <string name="text_ingest_glass">copos de 250ml</string>
+    <string name="text_loading">Carregando...</string>
 
     <!-- Strings from Activity -->
     <string name="fill_in_the_fields">Preencha os campos acima</string>
