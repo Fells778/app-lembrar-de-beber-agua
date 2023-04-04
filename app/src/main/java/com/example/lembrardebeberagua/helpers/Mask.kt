@@ -10,7 +10,7 @@ object Mask {
     const val FORMAT_CEP = "#####-####"
     const val FORMAT_DATE = "##/##/####"
     const val FORMAT_HOUR = "##:##"
-    const val FORMAT_WEIGHT = "##,##"
+    const val FORMAT_WEIGHT = "##.##"
 
     fun mask(ediTxt: EditText, mask: String): TextWatcher {
         return object : TextWatcher {

@@ -16,4 +16,13 @@ object EmptyFields {
         }
     }
 
+    fun fieldAWeight(editText: EditText, context: Context): Boolean{
+        return if(editText.text.length <= 3) {
+            editText.error = context.getString(R.string.field_weight)
+            editText.requestFocus()
+            false
+        }else{
+            true
+        }
+    }
 }

@@ -13,19 +13,26 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.coroutineScope
 import com.example.lembrardebeberagua.databinding.ActivityMainBinding
+import com.example.lembrardebeberagua.datastore.DataStore
 import com.example.lembrardebeberagua.helpers.EmptyFields
 import com.example.lembrardebeberagua.helpers.Mask
 import com.example.lembrardebeberagua.model.ViewModelMain
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var _binding: ActivityMainBinding
     private lateinit var viewModelMain: ViewModelMain
+    private lateinit var dataStore: DataStore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         viewModelMain = ViewModelProvider(this)[ViewModelMain::class.java]
+        dataStore = DataStore(context = this.applicationContext)
 
         initViews()
 
@@ -35,10 +42,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
+        readData()
         openAlarm()
         resetData()
         maskEditText()
         litersPerDayCalculation()
+    }
+
+    private fun rememberMe() {
+        _binding.checkboxRememberMe.isChecked.apply {
+            saveData()
+        }
+    }
+
+    private fun readData() {
+        lifecycle.coroutineScope.launchWhenCreated {
+            dataStore.getUserAge().collect {
+                _binding.editTextAge.text = it?.toEditable()
+            }
+            dataStore.getWeight().collect {
+                _binding.editTextWeight.text = it?.toEditable()
+            }
+        }
+    }
+
+    private fun saveData() {
+        CoroutineScope(Dispatchers.IO).launch {
+            dataStore.storeAge(
+                _binding.editTextAge.text.toString().trim()
+            )
+            dataStore.storeWeight(
+                _binding.editTextWeight.text.toString().trim()
+            )
+        }
     }
 
     private fun openAlarm() {
@@ -54,12 +90,15 @@ class MainActivity : AppCompatActivity() {
         _binding.apply {
             buttonCalc.setOnClickListener {
                 if (verificationFields()) {
+                    rememberMe()
                     dialogLoading()
                     val age = editTextAge.text.toString().toInt()
                     val weight = editTextWeight.text.toString().toDouble()
                     val result = textViewResult
                     viewModelMain.calcTotalMl(weight, age, result)
-                    viewModelMain.setVisibleMessage(textViewLltResult, constraintLayoutResult)
+                    viewModelMain.setVisibleMessage(
+                        textViewMessaeResult, textViewYouNeedToIngest, constraintLayoutResult
+                    )
                     viewModelMain.calcBottleAndGlass(textViewBottle, textViewGlass)
                     hiderKeyboard()
                 } else {
@@ -77,8 +116,10 @@ class MainActivity : AppCompatActivity() {
         _binding.apply {
             if (
                 EmptyFields.fieldEmpty(editTextWeight, applicationContext) &&
+                EmptyFields.fieldAWeight(editTextWeight, applicationContext) &&
                 EmptyFields.fieldEmpty(editTextAge, applicationContext)
-            ) return true
+            )
+                return true
         }
         return false
     }
@@ -90,7 +131,9 @@ class MainActivity : AppCompatActivity() {
                 editTextAge.text = reset.toEditable()
                 editTextWeight.text = reset.toEditable()
                 textViewResult.text = getString(R.string.text_lt)
+                textViewMessaeResult.visibility = View.VISIBLE
                 constraintLayoutResult.visibility = View.INVISIBLE
+                textViewYouNeedToIngest.visibility = View.INVISIBLE
             }
         }
     }

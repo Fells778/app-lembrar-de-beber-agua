@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">LembrarDeBeberAgua</string>
-
+    <!-- Strings from Activity -->
     <string name="empty_field">Campo vazio</string>
     <string name="text_remember_me">Lembrar de mim</string>
     <string name="text_your_name">Seu nome (opcional)</string>
@@ -8,8 +8,10 @@
     <string name="text_your_age">Sua idade</string>
     <string name="text_your_weight">Seu peso (Kg)</string>
     <string name="text_reset">Redefinir</string>
+    <string name="text_result">Resultado</string>
     <string name="text_remember">Lembrar</string>
     <string name="text_you_need_to_ingest">O seu consumo ideal é:</string>
+    <string name="text_about"> O seu consumo é de:</string>
     <string name="text_alert">Definir lembrete</string>
     <string name="text_lt">Litros</string>
     <string name="text_calc">Calcular</string>
@@ -19,8 +21,7 @@
     <string name="text_ingest_bottle">garrafinha de 500ml</string>
     <string name="text_ingest_glass">copos de 250ml</string>
     <string name="text_loading">Carregando...</string>
-
-    <!-- Strings from Activity -->
     <string name="fill_in_the_fields">Preencha os campos acima</string>
+    <string name="field_weight">Por favor informe seu peso por completo</string>
 
 </resources>

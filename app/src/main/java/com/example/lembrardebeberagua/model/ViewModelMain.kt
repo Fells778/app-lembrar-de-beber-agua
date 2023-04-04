@@ -2,7 +2,6 @@ package com.example.lembrardebeberagua.model
 
 import android.app.AlarmManager
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModel
@@ -35,15 +34,19 @@ class ViewModelMain : ViewModel() {
             totalResultML = resultMl
         }
         format.isGroupingUsed = false
-        textView.text = format.format(resultMl / 1000) + "" + " L "
+        textView.text = "${ceil(resultMl / 1000).toInt()} L de água /dia"
     }
 
     fun setVisibleMessage(
+        textView: TextView,
         textResult: TextView,
         constraintLayout: ConstraintLayout
     ) {
+        textView.visibility = View.INVISIBLE
         constraintLayout.visibility = View.VISIBLE
-        textResult.text = format.format(resultMl / 1000) + "" + " L de água /dia"
+        textResult.text =
+            "A quantidade sem arredondamento é de: " + format.format(resultMl / 1000) + "" + " L de água /dia"
+        textResult.visibility = View.VISIBLE
     }
 
     fun calcBottleAndGlass(bottle: TextView, glass: TextView) {
