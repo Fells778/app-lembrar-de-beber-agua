@@ -1,8 +1,11 @@
 package com.example.lembrardebeberagua
 
-import android.app.AlarmManager
-import android.app.Dialog
+import android.Manifest
+import android.app.*
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,18 +15,28 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import com.example.lembrardebeberagua.databinding.ActivityMainBinding
 import com.example.lembrardebeberagua.datastore.DataStore
 import com.example.lembrardebeberagua.helpers.EmptyFields
 import com.example.lembrardebeberagua.helpers.Mask
+import com.example.lembrardebeberagua.helpers.AlarmNotification
+import com.example.lembrardebeberagua.helpers.AlarmNotification.Companion.NOTIFICATION_ID
 import com.example.lembrardebeberagua.model.ViewModelMain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        const val MY_CHANNEL_ID = "myChannel"
+    }
     private lateinit var _binding: ActivityMainBinding
     private lateinit var viewModelMain: ViewModelMain
     private lateinit var dataStore: DataStore
@@ -35,18 +48,66 @@ class MainActivity : AppCompatActivity() {
         dataStore = DataStore(context = this.applicationContext)
 
         initViews()
+        createChannel()
 
         viewModelMain.alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-
         setContentView(_binding.root)
     }
 
     private fun initViews() {
         readData()
-        openAlarm()
         resetData()
         maskEditText()
+        defineNotification()
         litersPerDayCalculation()
+    }
+
+    private fun defineNotification() {
+        _binding.buttonAlarm.setOnClickListener {
+            loopMessage()
+            testCustomLayout()
+        }
+    }
+
+    private fun scheduleNotification() {
+        val intent = Intent(applicationContext, AlarmNotification::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            applicationContext,
+            NOTIFICATION_ID,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, Calendar.getInstance().timeInMillis, pendingIntent)
+    }
+
+    private fun loopMessage() {
+        val handler = Handler(Looper.getMainLooper())
+        val runnable = object : Runnable {
+            override fun run() {
+                scheduleNotification()
+                //Alterar para 3600000
+                handler.postDelayed(this, 1 * 60 * 1000)
+            }
+        }
+        handler.postDelayed(runnable, 1 * 60 * 1000)
+    }
+
+    private fun createChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                MY_CHANNEL_ID,
+                "MySuperChannel",
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
+                description = "Notification"
+            }
+
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     private fun rememberMe() {
@@ -84,7 +145,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-
 
     private fun litersPerDayCalculation() {
         _binding.apply {
@@ -152,6 +212,12 @@ class MainActivity : AppCompatActivity() {
         }, 1000)
         dialog.setContentView(R.layout.dialog_loading)
         dialog.setCancelable(false)
+        dialog.show()
+    }
+
+    private fun testCustomLayout(){
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.custom_layout_notification_user)
         dialog.show()
     }
 

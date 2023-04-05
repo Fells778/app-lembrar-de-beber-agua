@@ -12,7 +12,6 @@ class DataStore(private val context: Context) {
     companion object {
         private val Context.DATA_STORE: DataStore<Preferences> by preferencesDataStore("remember_me")
         val USER_AGE = stringPreferencesKey("AGE")
-
         val USER_WEIGHT = stringPreferencesKey("WEIGHT")
     }
 
